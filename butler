@@ -1,0 +1,150 @@
+term.clear()
+term.setCursorPos(1,1)
+local equip = 1
+local currentPos = "home"
+local furnace = {"furnace", "right", "forward", "forward", "forward", "forward", "forward", "down", "right", "forward", "forward", "forward", "forward", "forward", "forward", "forward", "right"}
+local chest = {"chest", "forward", "forward", "forward", "left", "forward", "forward", "forward", "forward", "forward", "forward", "up", "forward"}
+local home = {"home", "forward", "forward", "forward", "forward", "forward", "forward", "forward", "forward", "right", "right"}
+
+function startup()
+	turtle.select(11)
+	turtle.equipLeft()
+	rednet.open("left")
+	turtle.select(1)
+
+	print("TBUTLER SHELL v1.0.0")
+end
+
+function shutdown()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(11)
+	rednet.close("left")
+	turtle.equipLeft()
+	turtle.select(1)
+	os.shutdown()
+end
+
+function listen(command)
+	--figure out way to implement this
+end
+
+function path(destination)
+	if destination == nil then
+		--request path
+	elseif destination[1] == currentPos then
+		--do nothing
+	else --has saved path
+		for i,v in pairs(destination) do
+			if destination[i] == "down" then
+				turtle.down()
+			elseif destination[i] == "up" then
+				turtle.up()
+			elseif destination[i] == "forward" then
+				turtle.forward()
+			elseif destination[i] == "back" then
+				turtle.back()
+			elseif destination[i] == "right" then
+				turtle.turnRight()
+			elseif destination[i] == "left" then
+				turtle.turnLeft()
+			end
+		end
+		currentPos = destination
+		print(tostring(currentPos[1]))
+	end
+end
+
+function addCoal()
+	path(chest)
+	turtle.select(2)
+	turtle.suckDown(1)
+	path(furnace)
+	turtle.forward()
+	turtle.down()
+	turtle.turnLeft()
+	turtle.turnLeft()
+	turtle.select(2)
+	turtle.drop()
+	turtle.up()
+	turtle.forward()
+	turtle.turnLeft()
+	turtle.turnLeft()
+	path(home)
+end
+
+function equipSword()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(12)
+	turtle.equipRight()
+	equip = 12
+	turtle.select(1)
+end
+
+function equipPick()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(13)
+	turtle.equipRight()
+	equip = 13
+	turtle.select(1)
+end
+
+function equipAxe()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(14)
+	turtle.equipRight()
+	equip = 14
+	turtle.select(1)
+end
+
+function equipShovel()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(15)
+	turtle.equipRight()
+	equip = 15
+	turtle.select(1)
+end
+
+function equipHoe()
+	turtle.select(tonumber(equip))
+	turtle.equipRight()
+	turtle.select(16)
+	turtle.equipRight()
+	equip = 16
+	turtle.select(1)
+end
+
+startup()
+while true do
+	local input = read()
+	input = tostring(input)
+	if string.find(input, "equip") then
+		if string.find(input, "sword") then
+			equipSword()
+		end
+		if string.find(input, "pick") then
+			equipPick()
+		end
+		if string.find(input, "axe") then
+			equipAxe()
+		end
+		if string.find(input, "shovel") then
+			equipShovel()
+		end
+		if string.find(input, "hoe") then
+			equipHoe()
+		end
+	end
+	if string.find(input, "shutdown") or
+		string.find(input, "turn off") then
+		shutdown()
+		break
+	end
+	if string.find(input, "add coal") then
+		addCoal()
+	end
+end
